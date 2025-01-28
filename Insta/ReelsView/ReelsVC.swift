@@ -60,28 +60,48 @@ extension ReelsVC:UICollectionViewDelegate,UICollectionViewDataSource,UICollecti
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ReelsCVC", for: indexPath)as! ReelsCVC
         if let reel = getData?[indexPath.row] {
-                    cell.configure(with: reel)
-                }
+            cell.configure(with: reel)
+        }
         return cell
     }
     // UICollectionViewDelegateFlowLayout method to define the cell size
-        func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-            // Get the screen width and height for the current device
-            let width = UIScreen.main.bounds.width
-            let height = UIScreen.main.bounds.height
-
-            // Return the size that fills the screen
-            return CGSize(width: width, height: height)
-        }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        // Get the screen width and height for the current device
+        let width = UIScreen.main.bounds.width
+        let height = UIScreen.main.bounds.height
         
+        // Return the size that fills the screen
+        return CGSize(width: width, height: height)
+    }
+    
+    
+    
+    //new data added
+    
+    func apicCall(){
+        let url = URL(string: "https://mocki.io/v1/4577cb44-77a2-4dbf-814f-da54ca9ead3b")
+        var request = URLRequest(url: url!)
+        request.httpMethod = "GET"
+        let session = URLSession(configuration: .default)
+        session.dataTask(with: request) { data, response, error in
+            let decoder = JSONDecoder()
+            do{
+                let result = try decoder.decode([Reel].self, from: data!)
+                DispatchQueue.main.async {
+                    self.getData = result
+                    print("Response ----->\(result)")
+                    self.collectionView.reloadData()
+                }
+            }catch{
+                
+            }
+        }.resume()
+    }
+    
+
+    
+    
 }
-
-
-
-
-
-
-
 
 
 // Reels api json
